@@ -11,7 +11,6 @@ const receiver = new WebhookReceiver(
 export async function livekitWebhook(req: Request, res: Response) {
   try {
     const body = req.body;
-
     const headerPayload = req.headers;
     const authorization = headerPayload.authorization;
 

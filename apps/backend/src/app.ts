@@ -4,6 +4,7 @@ import express from "express";
 import helmet from "helmet";
 import morgan from "morgan";
 import api from "./api";
+import { livekitWebhook } from "./controllers/livekit.controller";
 import { subscriptionWebhook } from "./controllers/subscription.controller";
 import * as middlewares from "./middlewares";
 
@@ -19,8 +20,8 @@ app.post(
   bodyParser.raw({ type: "application/json" }),
   subscriptionWebhook
 );
+app.post("/api/webhooks/livekit", express.raw({type: 'application/webhook+json'}), livekitWebhook);
 app.use(express.json());
-
 app.use("/api/", api);
 
 app.use(middlewares.notFound);
