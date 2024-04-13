@@ -7,3 +7,25 @@ export const getStreamByUserId = (userId: string) => {
 
   return stream;
 };
+
+export const updateStreamById = async (data: any, id: string) => {
+  const stream = await db.stream.update({
+    where: { id },
+    data: {
+      ...data,
+    },
+  });
+
+  return stream;
+};
+
+export const updateStreamByUserId = async (data: any, userId: string) => {
+  const stream = await db.stream.update({
+    where: { userId: userId },
+    data: {
+      ...data,
+    },
+  });
+
+  return stream;
+};
