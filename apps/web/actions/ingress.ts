@@ -33,11 +33,6 @@ const egressClient = new EgressClient(
   process.env.LIVEKIT_SECRET_KEY!
 );
 
-const roomServiceClient = new RoomServiceClient(
-  process.env.LIVEKIT_API_URL!,
-  process.env.LIVEKIT_API_KEY!,
-  process.env.LIVEKIT_SECRET_KEY!
-);
 
 export const resetIngresses = async (hostIdentity: string) => {
   const ingresses = await ingressClient.listIngress({
@@ -103,37 +98,6 @@ export const createIngress = async (ingressType: IngressInput) => {
       },
       self?.id ?? ""
     );
-    console.log("[number 7]");
-    const { tracks } = await roomServiceClient.getParticipant(
-      self?.id ?? "",
-      self?.id ?? ""
-    );
-    console.log("[number 8]");
-    const audioTrackId = tracks.find(
-      (track) => track.source === TrackSource.MICROPHONE
-    )?.sid;
-    const videoTrackId = tracks.find(
-      (track) => track.source === TrackSource.CAMERA
-    )?.sid;
-
-    console.log("[number 9]");
-    const egress = await egressClient.startTrackCompositeEgress(
-      self?.id ?? "",
-      {
-        s3: {
-          accessKey: "005194de6a878530000000007",
-          secret: "K005yERiKVKhzd8Xn47HECAJEahQnMA",
-          region: "us-east-005",
-          bucket: "livekit",
-          endpoint: "s3.us-east-005.backblazeb2.com",
-        },
-        filepath: `livekit-demo/room-composite-test-${self?.id}.mp4`,
-      },
-      audioTrackId,
-      videoTrackId
-    );
-    console.log("[EGRESS]", egress);
-    console.log("[number 10]");
     revalidatePath(`/u/${self?.username}/keys`);
     return ingress;
   } catch (error: any) {

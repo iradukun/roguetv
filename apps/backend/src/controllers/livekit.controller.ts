@@ -6,6 +6,7 @@ import {
 } from "livekit-server-sdk";
 import { TrackSource } from "livekit-server-sdk/dist/proto/livekit_models";
 import { db } from "../lib/db";
+import { generateRandomString } from "../utils/utils";
 
 const receiver = new WebhookReceiver(
   process.env.LIVEKIT_API_KEY!,
@@ -43,45 +44,77 @@ export async function livekitWebhook(req: Request, res: Response) {
           stream.userId,
           stream.userId
         );
-        const audioTrackId = tracks.find(
-          (track) => track.source === TrackSource.MICROPHONE
-        )?.sid;
-        const videoTrackId = tracks.find(
-          (track) => track.source === TrackSource.CAMERA
-        )?.sid;
-
-        const egress = await egressClient.startTrackCompositeEgress(
-          stream.userId,
-          {
-            s3: {
-              accessKey: "005194de6a878530000000007",
-              secret: "K005yERiKVKhzd8Xn47HECAJEahQnMA",
-              region: "us-east-005",
-              bucket: "livekit",
-              endpoint: "s3.us-east-005.backblazeb2.com",
+        console.log("[DEBUG]: 1");
+        if (tracks.length > 0) {
+          const audioTrackId = tracks.find(
+            (track) => track.source === TrackSource.MICROPHONE
+          )?.sid;
+          const videoTrackId = tracks.find(
+            (track) => track.source === TrackSource.CAMERA
+          )?.sid;
+          console.log("[DEBUG]: 2");
+          const broadcast_id = generateRandomString(32);
+          console.log("[DEBUG]: 3");
+          const egress = await egressClient.startTrackCompositeEgress(
+            stream.userId,
+            {
+              s3: {
+                accessKey: process.env.S3_ACCESS_KEY!,
+                secret: process.env.S3_SECRET_KEY!,
+                region: process.env.S3_REGION!,
+                bucket: process.env.S3_BUCKET!,
+                endpoint: process.env.S3_ENDPOINT!,
+              },
+              filepath: `broadcast-${broadcast_id}.mp4`,
             },
-            filepath: `room-composite-test-${stream.userId}.mp4`,
-          },
-          audioTrackId,
-          videoTrackId
-        );
-        console.log("[EGRESS] created");
-        await db.stream.update({
-          where: { ingressId: event.ingressInfo?.ingressId },
-          data: {
-            isLive: true,
-          },
-        });
+            audioTrackId,
+            videoTrackId
+          );
+          console.log("[DEBUG]: 4");
+          await db.broadcast.create({
+            data: {
+              userId: stream.userId,
+              streamId: stream.id,
+              url: `https://${process.env.S3_BUCKET!}.${process.env.S3_ENDPOINT!}/broadcast-${broadcast_id}.mp4`,
+            },
+          });
+
+          console.log("[DEBUG]: 5");
+          console.log("[EGRESS] created", egress.fileResults);
+          await db.stream.update({
+            where: { ingressId: event.ingressInfo?.ingressId },
+            data: {
+              isLive: true,
+            },
+          });
+          console.log("[DEBUG]: 6");
+        }
       }
     }
 
     if (event.event === "ingress_ended") {
-      await db.stream.update({
+      const stream = await db.stream.update({
         where: { ingressId: event.ingressInfo?.ingressId },
         data: {
           isLive: false,
         },
       });
+      const broadcast = await db.broadcast.findFirst({
+        where: {
+          isComplete: false,
+          streamId: stream.id,
+        },
+      });
+      if (broadcast) {
+        await db.broadcast.update({
+          where: {
+            id: broadcast.id,
+          },
+          data: {
+            isComplete: true,
+          },
+        });
+      }
     }
 
     return res.status(200).send("Stream Status Updated!");
