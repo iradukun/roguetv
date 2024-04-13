@@ -22,6 +22,9 @@ model User {
   following  Follow[] @relation("Following")
   followedBy Follow[] @relation("FollowedBy")
 
+  subscribed   Subscription[] @relation("Subscription")
+  subscribedBy Subscription[] @relation("SubscriptionedBy")
+
   blocking  Block[] @relation("Blocking")
   blockedBy Block[] @relation("BlockedBy")
 
@@ -29,6 +32,7 @@ model User {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  Follow    Follow[]
 
   @@index([name, username])
 }
@@ -43,10 +47,31 @@ model Follow {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  User      User?    @relation(fields: [userId], references: [id])
+  userId    String?
 
   @@unique([followingId, followedById])
   @@index([followingId])
   @@index([followedById])
+}
+
+model Subscription {
+  id               String @id @default(uuid())
+  subscriptionId   String
+  subscriptionById String
+
+  subscriptioning User @relation(name: "SubscriptionedBy", fields: [subscriptionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  subscribedBy    User @relation(name: "Subscription", fields: [subscriptionById], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  isExpired Boolean @default(false)
+  isActive Boolean @default(false)
+
+  @@unique([subscriptionId, subscriptionById])
+  @@index([subscriptionId])
+  @@index([subscriptionById])
 }
 
 model Block {
