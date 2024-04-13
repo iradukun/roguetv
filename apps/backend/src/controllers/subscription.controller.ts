@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import Stripe from "stripe";
 import ApiError from "../errors/ApiError";
 import {
-  createSubscription,
+  createSubscriptionSession,
   isSubscribedUser,
   updatedSubscription,
 } from "../services/subscription-service";
@@ -12,12 +12,17 @@ export const createSubscriptionController = async (
   res: Response
 ) => {
   try {
-    const data = await createSubscription(req.body.username, req.body.userId);
+    const data = await createSubscriptionSession(
+      req.body.userId,
+      req.body.username
+    );
     res.status(200).json(data);
   } catch (error: any) {
     if (error instanceof ApiError) {
+      console.log(error.message);
       res.status(error.status ?? 500).json({ error: error.message });
     } else {
+      console.log(error.message);
       res.status(500).json({ error: error.message });
     }
   }
@@ -28,7 +33,6 @@ export const subscriptionWebhook = async (req: Request, res: Response) => {
   const sig = req.headers["stripe-signature"] as string;
 
   let event;
-
   try {
     event = stripe.webhooks.constructEvent(
       req.body,

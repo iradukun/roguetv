@@ -5,7 +5,7 @@ import { loadStripe } from "@stripe/stripe-js";
 
 import { createSubscription } from "@/lib/subscription-service";
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "./ui/button";
 export default function CheckoutPage() {
@@ -36,8 +36,9 @@ export function Checkout() {
         payment_method: { card: cardElement },
       });
       toast.success("Payment successful");
-      router.refresh();
-    } catch (error) {
+      window.location.reload();
+    } catch (error: any) {
+      console.log(error.message);
       toast.error("Error occurred");
     }
   };

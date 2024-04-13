@@ -4,9 +4,12 @@ import { db } from "../lib/db";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
-export const createSubscriptionSession = async (userId: string, id: string) => {
+export const createSubscriptionSession = async (
+  userId: string,
+  username: string
+) => {
   try {
-    const subscriptionData = await createSubscription(id, userId);
+    const subscriptionData = await createSubscription(username, userId);
     const subscription = await stripe.subscriptions.create({
       customer: "cus_Pt0LVVF40HUl4g",
       collection_method: "charge_automatically",

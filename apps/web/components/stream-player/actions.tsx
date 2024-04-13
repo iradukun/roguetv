@@ -88,7 +88,7 @@ export const Actions = ({
           subscribed
         </Button>
       ) : (
-        <CheckoutForm disabled={isPending || isHost} />
+        <CheckoutForm disabled={isHost} />
       )}
     </div>
   );
