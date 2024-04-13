@@ -8,11 +8,12 @@ import { toast } from "sonner";
 
 interface ActionsProps {
   isFollowing: boolean;
+  isSubscribed: boolean;
   isBlocking: boolean;
   userId: string;
 }
 
-export const Actions = ({ isFollowing, isBlocking, userId }: ActionsProps) => {
+export const Actions = ({ isFollowing, isBlocking, userId, isSubscribed }: ActionsProps) => {
   const [isPending, startTransition] = useTransition();
 
   const handleFollow = () => {

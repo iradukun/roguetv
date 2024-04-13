@@ -16,6 +16,7 @@ interface HeaderProps {
   hostIdentity: string;
   viewerIdentity: string;
   isFollowing: boolean;
+  isSubscribed: boolean;
   name: string;
 }
 
@@ -25,6 +26,7 @@ export const Header = ({
   hostIdentity,
   viewerIdentity,
   isFollowing,
+  isSubscribed,
   name,
 }: HeaderProps) => {
   const participants = useParticipants();
@@ -71,6 +73,7 @@ export const Header = ({
       </div>
       <Actions
         isFollowing={isFollowing}
+        isSubscribed={isSubscribed}
         hostIdentity={hostIdentity}
         isHost={isHost}
       />
