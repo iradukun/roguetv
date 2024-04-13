@@ -6,7 +6,7 @@ export const getRecommended = async (userId: string) => {
 
   let users = [];
 
-  if (userId) {
+  if (userId && userId !== "undefined") {
     users = await db.user.findMany({
       where: {
         AND: [

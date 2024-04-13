@@ -4,7 +4,7 @@ import { db } from "../lib/db";
 export const getStreams = async (userId: string) => {
   let streams = [];
 
-  if (userId.length > 0) {
+  if (userId.length > 0 || userId !== "undefined") {
     streams = await db.stream.findMany({
       where: {
         user: {
