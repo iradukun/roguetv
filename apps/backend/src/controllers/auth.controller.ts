@@ -7,9 +7,9 @@ export const loginController = async (req: Request, res: Response) => {
   try {
     const body = req.body;
 
-    await loginUser(body.password, body.email);
+    const user = await loginUser(body.password, body.email);
 
-    res.sendStatus(200);
+    res.status(200).json(user);
   } catch (error: any) {
     if (error instanceof AuthError) {
       res.status(400).json({ error: error.message });
@@ -24,7 +24,7 @@ export const registerController = async (req: Request, res: Response) => {
   try {
     const body = req.body;
 
-    await registerUser({
+    const user = await registerUser({
       email: body.email,
       password: body.password,
       first_name: body.first_name,
@@ -32,7 +32,7 @@ export const registerController = async (req: Request, res: Response) => {
       username: body.username,
     });
 
-    res.sendStatus(200);
+    res.status(200).json(user);
   } catch (error: any) {
     if (error instanceof AuthError) {
       res.status(400).json({ error: error.message });

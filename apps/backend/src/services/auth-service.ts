@@ -31,7 +31,7 @@ export const registerUser = async (user: {
 
     const hashed_password = await bcrypt.hash(user.password, 10);
 
-    await db.user.create({
+    return await db.user.create({
       data: {
         username: user.username,
         name: user.first_name + " " + user.last_name,
@@ -68,6 +68,8 @@ export const loginUser = async (password: string, email: string) => {
     if (!bcrypt.compareSync(password, user.password)) {
       throw new AuthError('Bad credentials');
     }
+
+    return user;
   } catch (error: any) {
     if (error instanceof AuthError) {
       throw error;
