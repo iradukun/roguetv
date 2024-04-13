@@ -8,7 +8,6 @@ import { getUserById } from "@/lib/user-service";
 import { isBlockedByUser } from "@/lib/block-service";
 
 export const createViewerToken = async (hostIdentity: string) => {
-  console.debug("[DEBUG]: createViewerToken execution start")
   let self;
 
   try {
@@ -48,6 +47,5 @@ export const createViewerToken = async (hostIdentity: string) => {
     canPublish: false,
     canPublishData: true,
   });
-  console.debug("[DEBUG]: createViewerToken execution done")
   return await Promise.resolve(token.toJwt());
 };
