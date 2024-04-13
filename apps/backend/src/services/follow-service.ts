@@ -1,3 +1,4 @@
+import ApiError from "../errors/ApiError";
 import { db } from "../lib/db";
 
 
@@ -9,7 +10,7 @@ export const isFollowingUser = async (id: string, userId: string) => {
     });
 
     if (!otherUser) {
-      throw new Error("User not found!");
+      throw new ApiError("User not found!", 404);
     }
 
     if (otherUser.id === userId) {
@@ -39,11 +40,11 @@ export const followUser = async (id: string, userId: string) => {
   });
 
   if (!otherUser) {
-    throw new Error("User not found!");
+    throw new ApiError("User not found!", 404);
   }
 
   if (otherUser.id === userId) {
-    throw new Error("Cannot follow yourself!");
+    throw new ApiError("Cannot follow yourself!", 400);
   }
 
   const existingFollow = await db.follow.findUnique({
@@ -56,7 +57,7 @@ export const followUser = async (id: string, userId: string) => {
   });
 
   if (existingFollow) {
-    throw new Error("Already following this user!");
+    throw new ApiError("Already following this user!", 400);
   }
 
   const follow = await db.follow.create({
@@ -79,11 +80,11 @@ export const unfollowUser = async (id: string, userId: string) => {
   });
 
   if (!otherUser) {
-    throw new Error("User not found!");
+    throw new ApiError("User not found!", 404);
   }
 
   if (otherUser.id === userId) {
-    throw new Error("Cannot unfollow yourself!");
+    throw new ApiError("Cannot unfollow yourself!", 400);
   }
 
   const existingFollow = await db.follow.findUnique({
@@ -96,7 +97,7 @@ export const unfollowUser = async (id: string, userId: string) => {
   });
 
   if (!existingFollow) {
-    throw new Error("Already unfollowed this user!");
+    throw new ApiError("Already unfollowed this user!", 400);
   }
 
   const follow = await db.follow.delete({

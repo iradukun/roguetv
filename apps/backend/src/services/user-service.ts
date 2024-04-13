@@ -41,4 +41,13 @@ export const getUserById = async (id: string) => {
   return user;
 };
 
+export const updateUser = async (data: any, userId: string) => {
+  const user = await db.user.update({
+    where: { id: userId },
+    data: {
+      ...data,
+    },
+  });
 
+  return user;
+};

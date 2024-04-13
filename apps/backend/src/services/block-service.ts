@@ -1,3 +1,4 @@
+import ApiError from "../errors/ApiError";
 import { db } from "../lib/db";
 
 
@@ -9,7 +10,7 @@ export const isBlockedByUser = async (id: string, userId: string) => {
     });
 
     if (!otherUser) {
-      throw new Error(`User not found!`);
+      throw new ApiError(`User not found!`, 404);
     }
 
     if (otherUser.id === userId) {
@@ -39,7 +40,7 @@ export const isBlockingUser = async (id: string, userId: string) => {
     });
 
     if (!otherUser) {
-      throw new Error("User not found!");
+      throw new ApiError("User not found!", 404);
     }
 
     if (otherUser.id === userId) {
@@ -73,7 +74,7 @@ export const blockUser = async (id: string, userId: string) => {
   });
 
   if (!otherUser) {
-    throw new Error("User not found!");
+    throw new ApiError("User not found!", 404);
   }
 
   const existingBlock = await db.block.findUnique({
@@ -86,7 +87,7 @@ export const blockUser = async (id: string, userId: string) => {
   });
 
   if (existingBlock) {
-    throw new Error(`'${otherUser.username}' is already blocked!`);
+    throw new ApiError(`'${otherUser.username}' is already blocked!`, 400);
   }
 
   const blocked = await db.block.create({
@@ -105,7 +106,7 @@ export const blockUser = async (id: string, userId: string) => {
 export const unblockUser = async (id: string, userId: string) => {
 
   if (userId === id) {
-    throw new Error("Cannot unblock yourself!");
+    throw new ApiError("Cannot unblock yourself!", 400);
   }
 
   const otherUser = await db.user.findUnique({
@@ -113,7 +114,7 @@ export const unblockUser = async (id: string, userId: string) => {
   });
 
   if (!otherUser) {
-    throw new Error("User not found!");
+    throw new ApiError("User not found!", 404);
   }
 
   const existingBlock = await db.block.findUnique({
@@ -126,7 +127,7 @@ export const unblockUser = async (id: string, userId: string) => {
   });
 
   if (!existingBlock) {
-    throw new Error(`'${otherUser.username}' already unblocked!`);
+    throw new ApiError(`'${otherUser.username}' already unblocked!`, 400);
   }
 
   const unblocked = await db.block.delete({
