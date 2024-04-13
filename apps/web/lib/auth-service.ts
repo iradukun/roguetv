@@ -6,6 +6,11 @@ export const getSelf = async () => {
   return session?.user;
 };
 
+export const currentUser = async () => {
+  const session = await getSession();
+  return getSelfByUsername(session?.user.username ?? "");
+};
+
 export const getSelfByUsername = async (username: string) => {
   const session = await getSession();
 

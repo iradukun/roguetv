@@ -2,7 +2,6 @@ import { Suspense } from "react";
 import { Container } from "./_components/container";
 import { Navbar } from "./_components/navbar";
 import { Sidebar, SidebarSkeleton } from "./_components/sidebar";
-import {} from "@clerk/nextjs";
 
 interface HomeLayoutProps {
   children: React.ReactNode;

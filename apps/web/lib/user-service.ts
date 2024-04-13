@@ -17,7 +17,7 @@ export const getUserById = async (id: string) => {
 };
 
 
-export const updateUser = async (data: any, userId: string) => {
+export const updateUserByUserId = async (data: any, userId: string) => {
   const res = await fetcher.put(`/api/user/${userId}`, data);
   const user = await res.data;
   return user;

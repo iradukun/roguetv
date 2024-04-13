@@ -11,21 +11,21 @@ export const registerUser = async (user: {
   last_name: string;
 }) => {
   try {
-    const check_user_email = await db.user.count({
+    const check_user_email = await db.user.findFirst({
       where: {
         email: user.email,
       },
     });
 
-    if (check_user_email > 0) {
+    if (check_user_email) {
       throw new AuthError('Email already exists');
     }
-    const check_user_username = await db.user.count({
+    const check_user_username = await db.user.findFirst({
       where: {
         username: user.username,
       },
     });
-    if (check_user_username > 0) {
+    if (check_user_username) {
       throw new AuthError('Username already exists');
     }
 

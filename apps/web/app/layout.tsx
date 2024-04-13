@@ -1,13 +1,10 @@
-import { ourFileRouter } from "@/app/api/uploadthing/core";
 import { ThemeProvider } from "@/components/theme-provider";
 import { siteConfig } from "@/config/site";
 import AuthContext from "@/context/auth-context";
-import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import { EventEmitter } from "events";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Toaster } from "sonner";
-import { extractRouterConfig } from "uploadthing/server";
 import "./globals.css";
 import ReactQueryProvider from "@/context/react-query-provider";
 
@@ -39,7 +36,6 @@ export default function RootLayout({
       <body className={inter.className}>
         <AuthContext>
           <ReactQueryProvider>
-            <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
             <ThemeProvider
               attribute="class"
               forcedTheme="dark"

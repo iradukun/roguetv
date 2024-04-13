@@ -114,7 +114,6 @@ export const unfollowUser = async (id: string, userId: string) => {
 
 export const getFollowedUsers = async (userId: string) => {
   try {
-
     const users = db.follow.findMany({
       where: {
         followedById: userId,

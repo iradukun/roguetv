@@ -1,11 +1,11 @@
 "use server";
 
 import { getSelf } from "@/lib/auth-service";
-import { db } from "@/lib/db";
-import { User } from "@prisma/client";
+import { updateUserByUserId } from "@/lib/user-service";
+
 import { revalidatePath } from "next/cache";
 
-export const updateUser = async (values: Partial<User>) => {
+export const updateUser = async (values: Partial<any>) => {
   try {
     const self = await getSelf();
 
@@ -13,10 +13,7 @@ export const updateUser = async (values: Partial<User>) => {
       bio: values.bio,
     };
 
-    const user = await db.user.update({
-      where: { id: self.id },
-      data: { ...validData },
-    });
+    const user = await updateUserByUserId(validData, self?.id ?? "");
 
     revalidatePath(`/u/${self?.username}`);
     revalidatePath(`/${self?.username}`);

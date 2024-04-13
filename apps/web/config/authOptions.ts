@@ -41,7 +41,7 @@ export const authOptions: AuthOptions = {
         if (!credentials?.email || !credentials?.password)
           throw new Error("Invalid credentials.");
 
-        const res = await axios.post(server_url + "/api/login", {
+        const res = await axios.post(server_url + "/api/auth/login", {
           email: credentials?.email,
           password: credentials?.password,
         });

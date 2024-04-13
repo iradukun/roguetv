@@ -14,14 +14,14 @@ export const Logo = () => {
       <div className="bg-white rounded-full p-1">
         <Image
           src="/spooky.svg"
-          alt="Gamehub"
+          alt="RogueTv"
           height={60}
           width={60}
           priority
         />
       </div>
       <div className={cn("flex flex-col items-center", font.className)}>
-        <p className="text-xl font-semibold">Gamehub</p>
+        <p className="text-xl font-semibold">RogueTv</p>
         <p className="text-sm text-muted-foreground">Let&apos;s Play</p>
       </div>
     </div>

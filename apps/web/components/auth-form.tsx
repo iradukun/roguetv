@@ -1,7 +1,7 @@
 "use client";
 
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import axios from "axios";
+import { fetcher } from "@/lib/axios";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
@@ -23,7 +23,7 @@ const AuthForm = ({ initVariant }: { initVariant: Variant }) => {
 
   useEffect(() => {
     if (session?.status === "authenticated") {
-      router.push("/users");
+      router.push("/");
     }
   }, [session?.status, router]);
 
@@ -50,8 +50,8 @@ const AuthForm = ({ initVariant }: { initVariant: Variant }) => {
     setIsLoading(true);
 
     if (variant === "REGISTER") {
-      axios
-        .post("/api/register", data)
+      fetcher
+        .post("/api/auth/register", data)
         .then(() => signIn("credentials", data))
         .catch((error) => toast.error("Something went wrong."))
         .finally(() => setIsLoading(false));
@@ -76,7 +76,6 @@ const AuthForm = ({ initVariant }: { initVariant: Variant }) => {
     }
   };
 
-
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -96,20 +95,18 @@ const AuthForm = ({ initVariant }: { initVariant: Variant }) => {
                   <Label htmlFor="first-name">First name</Label>
                   <Input
                     id="first-name"
-                    name="first_name"
                     placeholder="Lee"
                     required={variant === "REGISTER"}
-                    {...register}
+                    {...register("first_name")}
                   />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="last-name">Last name</Label>
                   <Input
                     id="last-name"
-                    name="last_name"
                     placeholder="Robinson"
                     required={variant === "REGISTER"}
-                    {...register}
+                    {...register("last_name")}
                   />
                 </div>
               </div>
@@ -117,10 +114,9 @@ const AuthForm = ({ initVariant }: { initVariant: Variant }) => {
                 <Label htmlFor="username">Username</Label>
                 <Input
                   id="username"
-                  name="username"
                   placeholder="lee123"
                   required={variant === "REGISTER"}
-                  {...register}
+                  {...register("username")}
                 />
               </div>
             </>
@@ -129,24 +125,22 @@ const AuthForm = ({ initVariant }: { initVariant: Variant }) => {
             <Label htmlFor="email">Email</Label>
             <Input
               id="email"
-              name="email"
               placeholder="m@example.com"
               required
               type="email"
-              {...register}
+              {...register("email")}
             />
           </div>
           <div className="space-y-2">
             <Label htmlFor="password">Password</Label>
             <Input
               id="password"
-              name="password"
               required
               type="password"
-              {...register}
+              {...register("password")}
             />
           </div>
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-1 mt-4">
             <Button type="submit" disabled={isLoading}>
               {variant === "LOGIN" ? "Sign in" : "Sign up"}
             </Button>
