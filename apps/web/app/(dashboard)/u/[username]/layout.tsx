@@ -15,9 +15,10 @@ export default async function DashboardLayout({
 }: DashboardLayoutProps) {
   const self = await getSelfByUsername(params.username);
 
-  if (!self) {
-    redirect("/");
-  }
+  // if (self === null || self === undefined) {
+  //   console.log("[REDIRECT]")
+  //   redirect("/");
+  // }
 
   return (
     <>

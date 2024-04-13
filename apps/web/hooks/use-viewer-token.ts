@@ -28,14 +28,13 @@ export const useViewerToken = (hostIdentity: string) => {
         if (jwtName) {
           setName(jwtName);
         }
-      } catch (error) {
+      } catch (error: any) {
         toast.error("Something Went Wrong!");
-        console.log("[createToken]: Token Creation Failed!");
+        console.log("[createToken]: Token Creation Failed!", error.message);
       }
     };
 
     createToken();
   }, [hostIdentity]);
-
   return { token, name: name, identity: identity };
 };

@@ -1,3 +1,5 @@
+"use server";
+
 import getSession from "@/actions/get-session";
 import { getUserByUsername } from "./user-service";
 
@@ -18,7 +20,7 @@ export const getSelfByUsername = async (username: string) => {
     throw new Error("Unauthorized!");
   }
 
-  const user = await getUserByUsername(session.user.username);
+  const user = await getUserByUsername(username);
 
   if (!user) {
     throw new Error("User not Found!");

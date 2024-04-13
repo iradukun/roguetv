@@ -10,6 +10,7 @@ interface SearchPageProps {
 
 export default function SearchPage({ searchParams }: SearchPageProps) {
   if (!searchParams.term) {
+    console.log("[REDIRECT]")
     redirect("/");
   }
 

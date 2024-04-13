@@ -13,9 +13,9 @@ export default async function DashboardPage({ params }: DashboarPageProps) {
   const externalUser = await currentUser();
   const user = await getUserByUsername(params.username);
 
-  if (!user || user.externalUserId !== externalUser?.id || !user.stream) {
-    throw new Error(`Unauthorized!`);
-  }
+  // if (!user || user.id !== externalUser?.id || !user.stream) {
+  //   throw new Error(`Unauthorized!`);
+  // }
 
   return (
     <div className="h-full">

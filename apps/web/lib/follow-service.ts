@@ -1,4 +1,4 @@
-import { getSession } from "next-auth/react";
+import getSession from "@/actions/get-session";
 import { fetcher } from "./axios";
 
 export const isFollowingUser = async (id: string) => {

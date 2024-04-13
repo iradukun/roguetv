@@ -16,7 +16,7 @@ export const Logo = () => {
         <div className="bg-white rounded-full p-1 mr-10 shrink-0 lg:mr-2">
           <Image
             src="/spooky.svg"
-            alt="Gamehub"
+            alt="rogetv"
             height={35}
             width={35}
             priority
@@ -28,7 +28,7 @@ export const Logo = () => {
             font.className
           )}
         >
-          <p className="text-xl font-semibold">Gamehub</p>
+          <p className="text-xl font-semibold">RogueTv</p>
           <p className="text-xs text-muted-foreground">Creator Dashboard</p>
         </div>
       </div>

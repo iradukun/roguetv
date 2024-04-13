@@ -1,5 +1,6 @@
 import getSession from "@/actions/get-session";
 import AuthForm from "@/components/auth-form";
+import Logout from "@/components/logout-button";
 import { Button } from "@/components/ui/button";
 import { Clapperboard } from "lucide-react";
 import Link from "next/link";
@@ -23,7 +24,7 @@ export const Actions = async () => {
               <span className="hidden lg:block">Dashboard</span>
             </Link>
           </Button>
-          <AuthForm initVariant="LOGIN" />
+          {!data?.user ? <AuthForm initVariant="LOGIN" /> : <Logout />}
         </div>
       )}
     </div>

@@ -69,7 +69,7 @@ const AuthForm = ({ initVariant }: { initVariant: Variant }) => {
 
           if (callback?.ok && !callback?.error) {
             toast.success("You are logged in.");
-            router.push("/");
+            window.location.href = "/";
           }
         })
         .finally(() => setIsLoading(false));

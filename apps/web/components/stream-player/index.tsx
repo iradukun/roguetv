@@ -1,15 +1,15 @@
 "use client";
 
 import { useViewerToken } from "@/hooks/use-viewer-token";
-import { LiveKitRoom } from "@livekit/components-react";
-import { Video, VideoSkeleton } from "./video";
-import { useChatSidebar } from "@/store/use-chat-sidebar";
 import { cn } from "@/lib/utils";
+import { useChatSidebar } from "@/store/use-chat-sidebar";
+import { LiveKitRoom } from "@livekit/components-react";
+import { AboutCard } from "./about-card";
 import { Chat, ChatSkeleton } from "./chat";
 import { ChatToggle } from "./chat-toggle";
 import { Header, HeaderSkeleton } from "./header";
 import { InfoCard } from "./info-card";
-import { AboutCard } from "./about-card";
+import { Video, VideoSkeleton } from "./video";
 
 type customStream = {
   id: string;

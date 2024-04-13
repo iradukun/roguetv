@@ -15,11 +15,6 @@ declare module "next-auth" {
       // role: UserRole;
     } & DefaultSession["user"];
   }
-
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
 }
 
 export const authOptions: AuthOptions = {
@@ -45,9 +40,7 @@ export const authOptions: AuthOptions = {
           email: credentials?.email,
           password: credentials?.password,
         });
-
-        const user = await res.data
-
+        const user = await res.data;
         return user;
       },
     }),
@@ -57,4 +50,21 @@ export const authOptions: AuthOptions = {
     strategy: "jwt",
   },
   secret: process.env.NEXTAUTH_SECRET,
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user?.id;
+        //@ts-ignore
+        token.username = user?.username;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      //@ts-ignore
+      session.user.id = token.id;
+      //@ts-ignore
+      session.user.username = token.username;
+      return session;
+    },
+  },
 };

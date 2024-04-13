@@ -17,7 +17,7 @@ export const Actions = () => {
           Exit
         </Link>
       </Button>
-      <AuthForm initVariant="LOGIN" />
+      {/* <AuthForm initVariant="LOGIN" /> */}
     </div>
   );
 };

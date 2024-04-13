@@ -51,7 +51,7 @@ export const Actions = ({
 
   const toggleFollow = () => {
     if (!data?.user.id) {
-      return router.push("/sign-in");
+      return router.push("/");
     }
 
     if (isHost) return;
