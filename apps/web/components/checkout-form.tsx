@@ -23,7 +23,7 @@ export function CheckoutForm({ disabled }: { disabled: boolean }) {
         <DialogHeader>
           <DialogTitle>Subscribe</DialogTitle>
           <DialogDescription>
-            subscribe to user to get benefits
+            subscribe to user to get benefits. <b className="text-lg font-bold">$2.99/mon</b>
           </DialogDescription>
         </DialogHeader>
         <div className="p-2 mt-2">
