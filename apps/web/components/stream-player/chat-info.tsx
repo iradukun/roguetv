@@ -5,9 +5,10 @@ import { Hint } from "../hint";
 interface ChatInfoProps {
   isDelayed: boolean;
   isFollowersOnly: boolean;
+  isSubscribersOnly: boolean;
 }
 
-export const ChatInfo = ({ isDelayed, isFollowersOnly }: ChatInfoProps) => {
+export const ChatInfo = ({ isDelayed, isFollowersOnly, isSubscribersOnly }: ChatInfoProps) => {
   const hint = useMemo(() => {
     if (isFollowersOnly && !isDelayed) {
       return "Only Followers can chat!";
@@ -15,10 +16,15 @@ export const ChatInfo = ({ isDelayed, isFollowersOnly }: ChatInfoProps) => {
       return "Messages are delayed by 3 seconds!";
     } else if (isDelayed && isFollowersOnly) {
       return "Only Followers can chat & Messages are delayed by 3 seconds!";
+    } else if (isSubscribersOnly && !isDelayed) {
+      return "Only Subscribers can chat!";
+    } else if (isDelayed && !isSubscribersOnly) {
+      return "Messages are delayed by 3 seconds!";
+    } else if (isDelayed && isSubscribersOnly) {
+      return "Only Subscribers can chat & Messages are delayed by 3 seconds!";
     }
-
     return "";
-  }, [isDelayed, isFollowersOnly]);
+  }, [isDelayed, isFollowersOnly, isSubscribersOnly]);
 
   const label = useMemo(() => {
     if (isFollowersOnly && !isDelayed) {
@@ -27,12 +33,18 @@ export const ChatInfo = ({ isDelayed, isFollowersOnly }: ChatInfoProps) => {
       return "Slow Mode!";
     } else if (isDelayed && isFollowersOnly) {
       return "Followers Only & Slow Mode!";
+    } else if (isSubscribersOnly && !isDelayed) {
+      return "Subscribers Only!";
+    } else if (isDelayed && !isSubscribersOnly) {
+      return "Slow Mode!";
+    } else if (isDelayed && isSubscribersOnly) {
+      return "Subscribers Only & Slow Mode!";
     }
 
     return "";
-  }, [isDelayed, isFollowersOnly]);
+  }, [isDelayed, isFollowersOnly, isSubscribersOnly]);
 
-  if (!isDelayed && !isFollowersOnly) {
+  if (!isDelayed && !isFollowersOnly && !isSubscribersOnly) {
     return null;
   }
 

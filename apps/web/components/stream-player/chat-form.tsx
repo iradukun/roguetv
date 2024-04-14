@@ -13,7 +13,9 @@ interface ChatFormProps {
   onChange: (value: string) => void;
   isHidden: boolean;
   isFollowersOnly: boolean;
+  isSubscribersOnly: boolean;
   isFollowing: boolean;
+  isSubscribed: boolean;
   isDelayed: boolean;
 }
 
@@ -23,15 +25,18 @@ export const ChatForm = ({
   onChange,
   isHidden,
   isFollowersOnly,
+  isSubscribersOnly,
   isFollowing,
   isDelayed,
+  isSubscribed
 }: ChatFormProps) => {
   const [isDelayBlocked, setIsDelayBlocked] = useState(false);
 
   const isFollowersOnlyAndNotFollowing = isFollowersOnly && !isFollowing;
+  const isSubscribersOnlyAndNotSubscribed = isSubscribersOnly && !isSubscribed;
 
   const isDisabled =
-    isHidden || isDelayBlocked || isFollowersOnlyAndNotFollowing;
+    isHidden || isDelayBlocked || isFollowersOnlyAndNotFollowing || isSubscribersOnlyAndNotSubscribed;
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -60,7 +65,7 @@ export const ChatForm = ({
       className="flex flex-col items-center gap-y-4 p-3"
     >
       <div className="w-full">
-        <ChatInfo isDelayed={isDelayed} isFollowersOnly={isFollowersOnly} />
+        <ChatInfo isDelayed={isDelayed} isFollowersOnly={isFollowersOnly} isSubscribersOnly={isSubscribersOnly} />
         <Input
           onChange={(e) => onChange(e.target.value)}
           value={value}
@@ -68,7 +73,8 @@ export const ChatForm = ({
           placeholder="Send a message"
           className={cn(
             "border-white/10",
-            isFollowersOnly && "rounded-t-none border-t-0"
+            isFollowersOnly && "rounded-t-none border-t-0",
+            isSubscribersOnly && "rounded-t-none border-t-0",
           )}
         />
       </div>

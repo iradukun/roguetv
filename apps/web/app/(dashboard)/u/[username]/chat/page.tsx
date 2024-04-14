@@ -37,6 +37,11 @@ export default async function ChatPage({ params }: ChatPageProps) {
           label="Only followers can Chat"
           value={stream.isChatFollowersOnly}
         />
+        <ToggleCard
+          field="isChatSubscriberOnly"
+          label="Only subscribers can Chat"
+          value={stream.isChatSubscriberOnly}
+        />
       </div>
     </div>
   );

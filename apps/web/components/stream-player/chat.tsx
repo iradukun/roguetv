@@ -19,9 +19,11 @@ interface ChatProps {
   hostIdentity: string;
   viewerName: string;
   isFollowing: boolean;
+  isSubscribed: boolean;
   isChatEnabled: boolean;
   isChatDelayed: boolean;
   isChatFollowersOnly: boolean;
+  isChatSubscriberOnly: boolean;
 }
 
 export const Chat = ({
@@ -29,9 +31,11 @@ export const Chat = ({
   hostIdentity,
   viewerName,
   isFollowing,
+  isSubscribed,
   isChatEnabled,
   isChatDelayed,
   isChatFollowersOnly,
+  isChatSubscriberOnly
 }: ChatProps) => {
   const matches = useMediaQuery("(max-width: 1024px)");
   const { variant, expand } = useChatSidebar((state) => state);
@@ -79,7 +83,9 @@ export const Chat = ({
             isHidden={isHidden}
             isDelayed={isChatDelayed}
             isFollowersOnly={isChatFollowersOnly}
+            isSubscribersOnly={isChatSubscriberOnly}
             isFollowing={isFollowing}
+            isSubscribed={isSubscribed}
           />
         </>
       )}

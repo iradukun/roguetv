@@ -6,7 +6,7 @@ import { useTransition } from "react";
 import { updateStream } from "@/actions/stream";
 import { Skeleton } from "@/components/ui/skeleton";
 
-type FieldTypes = "isChatEnabled" | "isChatDelayed" | "isChatFollowersOnly";
+type FieldTypes = "isChatEnabled" | "isChatDelayed" | "isChatFollowersOnly" | "isChatSubscriberOnly";
 
 interface ToggleCardProps {
   field: FieldTypes;
