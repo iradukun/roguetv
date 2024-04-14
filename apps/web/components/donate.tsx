@@ -3,40 +3,42 @@
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 
-import { createSubscription } from "@/lib/subscription-service";
+import { emitDonate } from "@/hooks/use-donate";
+import { createDonation } from "@/lib/donate-service";
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
-import { useParams, usePathname, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "./ui/button";
-export default function CheckoutPage() {
+export default function DonatePage() {
   const stripeApiKey = loadStripe(
     process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
   );
   return (
     <Elements stripe={stripeApiKey}>
-      <Checkout />
+      <Donate />
     </Elements>
   );
 }
 
-export function Checkout() {
+export function Donate() {
   const stripe = useStripe();
-  const router = useRouter();
   const elements = useElements();
-  const { username } = useParams<{ username: string }>();
+
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const cardElement = elements?.getElement("card");
 
     try {
       if (!stripe || !cardElement) return null;
-      const client_secret = await createSubscription(username);
 
-      await stripe?.confirmCardPayment(client_secret, {
+      const response = await createDonation(
+        1 * 100, // Amount in cents
+      );
+
+      await stripe?.confirmCardPayment(response, {
         payment_method: { card: cardElement },
       });
       toast.success("Payment successful");
-      window.location.reload();
+      emitDonate();
     } catch (error: any) {
       console.log(error.message);
       toast.error("Error occurred");
@@ -47,7 +49,7 @@ export function Checkout() {
     <form onSubmit={onSubmit}>
       <CardElement />
       <Button type="submit" className="mt-4">
-        Submit
+        Proceed
       </Button>
     </form>
   );

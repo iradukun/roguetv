@@ -1,18 +1,19 @@
 "use client";
 
+import { useDonateListener } from "@/hooks/use-donate";
 import { ChatVariant, useChatSidebar } from "@/store/use-chat-sidebar";
 import {
   useChat,
   useConnectionState,
   useRemoteParticipant,
 } from "@livekit/components-react";
-import { useMediaQuery } from "usehooks-ts";
 import { ConnectionState } from "livekit-client";
 import { useEffect, useMemo, useState } from "react";
-import { ChatHeader, ChatHeaderSkeleton } from "./chat-header";
-import { ChatForm, ChatFormSkeleton } from "./chat-form";
-import { ChatList, ChatListSkeleton } from "./chat-list";
+import { useMediaQuery } from "usehooks-ts";
 import { ChatCommunity } from "./chat-community";
+import { ChatForm, ChatFormSkeleton } from "./chat-form";
+import { ChatHeader, ChatHeaderSkeleton } from "./chat-header";
+import { ChatList, ChatListSkeleton } from "./chat-list";
 
 interface ChatProps {
   hostName: string;
@@ -35,7 +36,7 @@ export const Chat = ({
   isChatEnabled,
   isChatDelayed,
   isChatFollowersOnly,
-  isChatSubscriberOnly
+  isChatSubscriberOnly,
 }: ChatProps) => {
   const matches = useMediaQuery("(max-width: 1024px)");
   const { variant, expand } = useChatSidebar((state) => state);
@@ -48,6 +49,12 @@ export const Chat = ({
 
   const [value, setValue] = useState("");
   const { chatMessages: messages, send } = useChat();
+
+  useDonateListener(() => {
+    if (send) {
+      send("Donated 1$");
+    }
+  });
 
   useEffect(() => {
     if (matches) {

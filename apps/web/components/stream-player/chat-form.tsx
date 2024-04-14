@@ -6,6 +6,7 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Skeleton } from "../ui/skeleton";
 import { ChatInfo } from "./chat-info";
+import { DonateForm } from "../donate-form";
 
 interface ChatFormProps {
   onSubmit: () => void;
@@ -79,11 +80,13 @@ export const ChatForm = ({
         />
       </div>
       <div className="ml-auto">
+        <DonateForm disabled={isDisabled} />
         <Button
           type="submit"
           variant={"primary"}
           size={"sm"}
           disabled={isDisabled}
+          className="ml-2"
         >
           Chat
         </Button>
