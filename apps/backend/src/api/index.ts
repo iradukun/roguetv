@@ -1,5 +1,6 @@
 import express from "express";
 import auth from "./auth";
+import broadcast from "./broadcast";
 import stream from "./stream";
 import subscription from "./subscription";
 import user from "./user";
@@ -12,5 +13,6 @@ router.use("/webhooks", webhooks);
 router.use("/user", user);
 router.use("/stream", stream);
 router.use("/subscription", subscription);
+router.use("/broadcast", broadcast);
 
 export default router;
