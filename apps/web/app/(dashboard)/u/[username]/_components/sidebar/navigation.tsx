@@ -1,7 +1,12 @@
 "use client";
 
-
-import { Fullscreen, KeyRound, MessageSquare, Users } from "lucide-react";
+import {
+  Fullscreen,
+  KeyRound,
+  MessageSquare,
+  Users,
+  Video,
+} from "lucide-react";
 import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import { NavItem, NavItemsSkeleton } from "./nav-item";
@@ -9,7 +14,7 @@ import { NavItem, NavItemsSkeleton } from "./nav-item";
 export const Navigation = () => {
   const pathname = usePathname();
   const { data } = useSession();
- const user = data?.user;
+  const user = data?.user;
   const routes = [
     {
       label: "Stream",
@@ -31,12 +36,17 @@ export const Navigation = () => {
       href: `/u/${user?.username}/community`,
       icon: Users,
     },
+    {
+      label: "Broadcasts",
+      href: `/u/${user?.username}/broadcast`,
+      icon: Video,
+    },
   ];
 
   if (!user?.username) {
     return (
       <ul className="space-y-2">
-        {[...Array(4)].map((_, i) => (
+        {[...Array(5)].map((_, i) => (
           <NavItemsSkeleton key={i} />
         ))}
       </ul>

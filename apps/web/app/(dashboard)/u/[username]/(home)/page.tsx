@@ -19,7 +19,7 @@ export default async function DashboardPage({ params }: DashboarPageProps) {
 
   return (
     <div className="h-full">
-      <StreamPlayer user={user} stream={user.stream} isFollowing />
+      <StreamPlayer user={user} stream={user.stream} isFollowing isSubscribed={false} />
     </div>
   );
 }
