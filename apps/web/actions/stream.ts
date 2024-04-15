@@ -21,6 +21,7 @@ export const updateStream = async (values: Partial<any>) => {
       isChatEnabled: values.isChatEnabled,
       isChatDelayed: values.isChatDelayed,
       isChatFollowersOnly: values.isChatFollowersOnly,
+      isChatSubscriberOnly: values.isChatSubscriberOnly,
     };
 
     const stream = updateStreamById(validData, selfStream.id);
