@@ -50,9 +50,11 @@ export const Chat = ({
   const [value, setValue] = useState("");
   const { chatMessages: messages, send } = useChat();
 
-  useDonateListener(() => {
+  useDonateListener((data) => {
     if (send) {
-      send("Donated 1$");
+      if (data.data.length > 0) {
+        send("Donated 1$");
+      }
     }
   });
 

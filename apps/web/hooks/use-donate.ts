@@ -1,5 +1,7 @@
 import { createEvent } from "react-event-hook";
 
-const { useDonateListener, emitDonate } = createEvent("donate")()
+const { useDonateListener, emitDonate } = createEvent("donate")<{
+  data: string;
+}>();
 
-export { useDonateListener, emitDonate }
+export { emitDonate, useDonateListener };

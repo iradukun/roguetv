@@ -9,7 +9,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import CheckoutPage from "./donate";
+import CheckoutPage from "./checkout";
 
 export function CheckoutForm({ disabled }: { disabled: boolean }) {
   return (
