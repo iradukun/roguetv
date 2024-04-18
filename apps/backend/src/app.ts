@@ -9,7 +9,6 @@ import { subscriptionWebhook } from "./controllers/subscription.controller";
 import { connectDB } from "./lib/db";
 import * as middlewares from "./middlewares";
 import { logResponseData } from "./middlewares";
-import { logResponseData } from "./middlewares";
 
 require("dotenv").config();
 
