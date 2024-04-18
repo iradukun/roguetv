@@ -1,5 +1,4 @@
 import ApiError from "../errors/ApiError";
-import { db } from "../lib/db";
 import { Follow } from "../models/follow.model";
 import { User } from "../models/user.model";
 
@@ -101,53 +100,9 @@ export const getFollowedUsers = async (userId: string) => {
             }
           ]
         },
-        populate: {
-          path: 'stream',
-          select: 'isLive'
-        }
       });
     return users;
   } catch (error) {
     return [];
   }
-  // try {
-  //   const users = db.follow.findMany({
-  //     where: {
-  //       followedById: userId,
-  //       following: {
-  //         OR: [
-  //           {
-  //             blocking: {
-  //               none: {
-  //                 blockingId: userId,
-  //               },
-  //             },
-  //           },
-  //           {
-  //             blockedBy: {
-  //               none: {
-  //                 blockedById: userId,
-  //               },
-  //             },
-  //           },
-  //         ],
-  //       },
-  //     },
-  //     include: {
-  //       following: {
-  //         include: {
-  //           stream: {
-  //             select: {
-  //               isLive: true,
-  //             },
-  //           },
-  //         },
-  //       },
-  //     },
-  //   });
-
-  //   return users;
-  // } catch (error) {
-  //   return [];
-  // }
 };

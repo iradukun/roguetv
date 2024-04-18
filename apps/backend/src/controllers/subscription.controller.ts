@@ -6,7 +6,7 @@ import {
   isSubscribedUser,
   updatedSubscription,
 } from "../services/subscription-service";
-
+require("dotenv").config();
 export const createSubscriptionController = async (
   req: Request,
   res: Response

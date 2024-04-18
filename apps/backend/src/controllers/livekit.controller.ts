@@ -5,11 +5,10 @@ import {
   WebhookReceiver,
 } from "livekit-server-sdk";
 import { TrackSource } from "livekit-server-sdk/dist/proto/livekit_models";
-import { db } from "../lib/db";
 import { Broadcast } from "../models/broadcast.model";
 import { Stream } from "../models/stream.model";
 import { generateRandomString } from "../utils/utils";
-
+require("dotenv").config();
 const receiver = new WebhookReceiver(
   process.env.LIVEKIT_API_KEY!,
   process.env.LIVEKIT_SECRET_KEY!
@@ -92,27 +91,17 @@ export async function livekitWebhook(req: Request, res: Response) {
     }
 
     if (event.event === "ingress_ended") {
-      const stream = await db.stream.update({
-        where: { ingressId: event.ingressInfo?.ingressId },
-        data: {
-          isLive: false,
-        },
-      });
-      const broadcast = await db.broadcast.findFirst({
-        where: {
-          isComplete: false,
-          streamId: stream.id,
-        },
+      const stream = await Stream.findOneAndUpdate(
+        { ingressId: event.ingressInfo?.ingressId },
+        { isLive: false },
+        { new: true }
+      );
+      const broadcast = await Broadcast.findOne({
+        isComplete: false,
+        streamId: stream?._id,
       });
       if (broadcast) {
-        await db.broadcast.update({
-          where: {
-            id: broadcast.id,
-          },
-          data: {
-            isComplete: true,
-          },
-        });
+        await Broadcast.findByIdAndUpdate(broadcast._id, { isComplete: true });
       }
     }
 

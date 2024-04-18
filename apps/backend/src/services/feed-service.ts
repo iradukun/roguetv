@@ -1,21 +1,33 @@
-import { db } from "../lib/db";
 import { Stream } from "../models/stream.model";
-
+import { User } from "../models/user.model";
 
 export const getStreams = async (userId: string) => {
   try {
     let streams = [];
 
     if (userId && userId !== "undefined") {
-      streams = await Stream.find({
-        user: { $nin: [userId] }
+      const rawStreams = await Stream.find({
+        // userId: { $nin: [userId] },
       })
-        .select('id user thumbnailUrl name isLive')
         .sort({ isLive: -1, updatedAt: -1 });
+      for (const stream of rawStreams) {
+
+        const user = await User.findById(stream?.userId?._id.toString());
+        streams.push({
+          ...stream.toJSON(),
+          user,
+        });
+      }
     } else {
-      streams = await Stream.find()
-        .select('id user thumbnailUrl name isLive')
-        .sort({ isLive: -1, updatedAt: -1 });
+      const rawStreams = await Stream.find()
+      .sort({ isLive: -1, updatedAt: -1 });
+      for (const stream of rawStreams) {
+        const user = await User.findById(stream?.userId?._id.toString());
+        streams.push({
+          ...stream.toJSON(),
+          user,
+        });
+      }
     }
 
     return streams;

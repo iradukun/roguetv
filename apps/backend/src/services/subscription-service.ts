@@ -2,7 +2,7 @@ import { Stripe } from "stripe";
 import ApiError from "../errors/ApiError";
 import { Subscription } from "../models/subscription.model";
 import { User } from "../models/user.model";
-
+require("dotenv").config();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 export const createSubscriptionSession = async (

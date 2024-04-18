@@ -36,6 +36,7 @@ export const registerUser = async (user: {
 
     const newStream = new Stream({
       name: `${user.username}'s stream`,
+      userId: newUser.id,
     });
 
     await newStream.save();

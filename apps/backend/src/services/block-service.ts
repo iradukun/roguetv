@@ -115,18 +115,13 @@ export const unblockUser = async (id: string, userId: string) => {
 };
 
 export const getBlockedUsers = async (userId: string) => {
-  const blockedUsers = await Block.find({ blockedById: userId }).populate(
-    "blocking"
-  );
+  const blockedUsers = await Block.find({ blockedById: userId });
+  const res = [];
+  for (const blockedUser of blockedUsers) {
+    const blocking = await User.findById(
+      blockedUser?.blockedById?._id.toString()
+    );
+    res.push({ ...blockedUser.toJSON(), blocking });
+  }
   return blockedUsers;
-  // const blockedUsers = await db.block.findMany({
-  //   where: {
-  //     blockedById: userId,
-  //   },
-  //   include: {
-  //     blocking: true,
-  //   },
-  // });
-
-  // return blockedUsers;
 };

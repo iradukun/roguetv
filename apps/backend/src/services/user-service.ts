@@ -1,59 +1,19 @@
+import { Follow } from "../models/follow.model";
+import { Stream } from "../models/stream.model";
 import { User } from "../models/user.model";
 export const getUserByUsername = async (username: string) => {
-  const user = await User.findOne({ username })
-    .select("id username bio imageUrl bannerUrl")
-    .populate({
-      path: "stream",
-      select:
-        "id isLive name isChatDelayed isChatEnabled isChatFollowersOnly thumbnailUrl",
-    })
-    .populate({
-      path: "_count",
-      select: "followedBy",
-    });
-  return user;
-  //
-  // const user = await db.user.findUnique({
-  //   where: { username },
-  //   select: {
-  //     id: true,
-  //     username: true,
-  //     bio: true,
-  //     imageUrl: true,
-  //     bannerUrl: true,
-  //     stream: {
-  //       select: {
-  //         id: true,
-  //         isLive: true,
-  //         name: true,
-  //         isChatDelayed: true,
-  //         isChatEnabled: true,
-  //         isChatFollowersOnly: true,
-  //         thumbnailUrl: true,
-  //       },
-  //     },
-  //     _count: {
-  //       select: {
-  //         followedBy: true,
-  //       },
-  //     },
-  //   },
-  // });
-
-  // return user;
+  const user = await User.findOne({ username }).select(
+    "id username bio imageUrl bannerUrl"
+  );
+  const stream = await Stream.findOne({ userId: user?.id });
+  const _count = await Follow.find({ followingId: user?.id }).countDocuments();
+  return { ...user?.toJSON(), _count: { followedBy: _count }, stream };
 };
 
 export const getUserById = async (id: string) => {
-  const user = await User.findById(id).populate("stream");
-  return user;
-  // const user = await db.user.findUnique({
-  //   where: { id },
-  //   include: {
-  //     stream: true,
-  //   },
-  // });
-
-  // return user;
+  const user = await User.findById(id);
+  const stream = await Stream.findOne({ userId: user?.id });
+  return { ...user?.toJSON(), stream };
 };
 
 export const updateUser = async (data: any, userId: string) => {
