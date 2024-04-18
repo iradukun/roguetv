@@ -1,5 +1,5 @@
 import Stripe from "stripe";
-
+require("dotenv").config();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 export const createDonation = async (amount: number) => {

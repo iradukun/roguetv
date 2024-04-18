@@ -1,7 +1,8 @@
 import { Stripe } from "stripe";
 import ApiError from "../errors/ApiError";
-import { db } from "../lib/db";
-
+import { Subscription } from "../models/subscription.model";
+import { User } from "../models/user.model";
+require("dotenv").config();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 export const createSubscriptionSession = async (
@@ -44,10 +45,7 @@ export const createSubscriptionSession = async (
 
 export const isSubscribedUser = async (id: string, userId: string) => {
   try {
-    const otherUser = await db.user.findUnique({
-      where: { id },
-    });
-
+    const otherUser = await User.findById(id);
     if (!otherUser) {
       throw new ApiError("User not found!", 404);
     }
@@ -56,16 +54,11 @@ export const isSubscribedUser = async (id: string, userId: string) => {
       return true;
     }
 
-    const existingSubscription = await db.subscription.findUnique({
-      where: {
-        subscriptionId_subscriptionById: {
-          subscriptionId: otherUser.id,
-          subscriptionById: userId,
-        },
-        isActive: true,
-      },
+    const existingSubscription = await Subscription.findOne({
+      subscriptionId: otherUser.id,
+      subscriptionById: userId,
+      isActive: true,
     });
-
     return !!existingSubscription;
   } catch (error) {
     console.error(error);
@@ -74,55 +67,45 @@ export const isSubscribedUser = async (id: string, userId: string) => {
 };
 
 export const createSubscription = async (username: string, userId: string) => {
-  const otherUser = await db.user.findUnique({
-    where: { username },
-  });
+  try {
+    const otherUser = await User.findOne({ username });
+    if (!otherUser) {
+      throw new ApiError("User not found!", 404);
+    }
 
-  if (!otherUser) {
-    throw new ApiError("User not found!", 404);
-  }
+    if (otherUser.id === userId) {
+      throw new ApiError("Cannot subscribe yourself!", 400);
+    }
 
-  if (otherUser.id === userId) {
-    throw new ApiError("Cannot subscribe yourself!", 400);
-  }
-
-  const existingSubscribe = await db.subscription.findUnique({
-    where: {
-      subscriptionId_subscriptionById: {
-        subscriptionId: otherUser.id,
-        subscriptionById: userId,
-      },
-    },
-  });
-
-  if (existingSubscribe) {
-    throw new ApiError("Already Subscribeing this user!", 400);
-  }
-
-  const subscription = await db.subscription.create({
-    data: {
+    const existingSubscribe = await Subscription.findOne({
       subscriptionId: otherUser.id,
       subscriptionById: userId,
-    },
-    include: {
-      subscribedBy: true,
-      subscriptioning: true,
-    },
-  });
+    });
 
-  return subscription;
+    if (existingSubscribe) {
+      throw new ApiError("Already subscribing to this user!", 400);
+    }
+
+    const subscription = await Subscription.create({
+      subscriptionId: otherUser.id,
+      subscriptionById: userId,
+    });
+    const subscriptioning = await User.findById(otherUser.id);
+    const subscribedBy = await User.findById(userId);
+    return { ...subscription, subscriptioning, subscribedBy };
+  } catch (error) {
+    throw error;
+  }
 };
 
 export const updatedSubscription = async (
   id: string,
   isSubscribed: boolean
 ) => {
-  await db.subscription.update({
-    where: {
-      id,
-    },
-    data: {
-      isActive: isSubscribed,
-    },
-  });
+  try {
+    await Subscription.findByIdAndUpdate(id, { isActive: isSubscribed });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
 };

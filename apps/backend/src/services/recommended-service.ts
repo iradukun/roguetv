@@ -1,74 +1,45 @@
-import { db } from "../lib/db";
-
+import { Stream } from "../models/stream.model";
+import { User } from "../models/user.model";
 
 export const getRecommended = async (userId: string) => {
-  // await new Promise((resolve) => setTimeout(resolve, 5000));
+  try {
+    let users = [];
 
-  let users = [];
-
-  if (userId && userId !== "undefined") {
-    users = await db.user.findMany({
-      where: {
-        AND: [
-          {
-            NOT: {
-              id: userId,
-            },
-          },
-          {
-            NOT: {
-              followedBy: {
-                some: {
-                  followedById: userId,
-                },
-              },
-            },
-          },
-          {
-            NOT: {
-              blocking: {
-                some: {
-                  blockingId: userId,
-                },
-              },
-            },
-          },
-          {
-            NOT: {
-              blockedBy: {
-                some: {
-                  blockedById: userId,
-                },
-              },
-            },
-          },
+    if (userId && userId !== "undefined") {
+      const rawUsers = await User.find({
+        $and: [
+          { _id: { $ne: userId } },
+          { "followedBy.followedById": { $ne: userId } },
+          { "blocking.blockingId": { $ne: userId } },
+          { "blockedBy.blockedById": { $ne: userId } },
         ],
-      },
-      include: {
-        stream: {
-          select: {
-            isLive: true,
-          },
-        },
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
-  } else {
-    users = await db.user.findMany({
-      include: {
-        stream: {
-          select: {
-            isLive: true,
-          },
-        },
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
-  }
+      }).sort({ createdAt: -1 });
+      for (const user of rawUsers) {
+        const stream = await Stream.findOne({ userId: user.id }).select(
+          "isLive"
+        );
+        users.push({
+          ...user.toJSON(),
+          stream: stream,
+        });
+      }
+    } else {
+      const rawUsers = await User.find().sort({ createdAt: -1 });
 
-  return users;
+      for (const user of rawUsers) {
+        const stream = await Stream.findOne({ userId: user.id }).select(
+          "isLive"
+        );
+        users.push({
+          ...user.toJSON(),
+          stream: stream,
+        });
+      }
+    }
+
+    return users;
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
 };

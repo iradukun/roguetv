@@ -1,14 +1,10 @@
 import ApiError from "../errors/ApiError";
-import { db } from "../lib/db";
-
+import { Follow } from "../models/follow.model";
+import { User } from "../models/user.model";
 
 export const isFollowingUser = async (id: string, userId: string) => {
   try {
-
-    const otherUser = await db.user.findUnique({
-      where: { id },
-    });
-
+    const otherUser = await User.findById(id);
     if (!otherUser) {
       throw new ApiError("User not found!", 404);
     }
@@ -17,13 +13,9 @@ export const isFollowingUser = async (id: string, userId: string) => {
       return true;
     }
 
-    const existingFollow = await db.follow.findUnique({
-      where: {
-        followingId_followedById: {
-          followingId: otherUser.id,
-          followedById: userId,
-        },
-      },
+    const existingFollow = await Follow.findOne({
+      followingId: otherUser.id,
+      followedById: userId,
     });
 
     return !!existingFollow;
@@ -34,121 +26,81 @@ export const isFollowingUser = async (id: string, userId: string) => {
 };
 
 export const followUser = async (id: string, userId: string) => {
+  try {
+    const otherUser = await User.findById(id);
+    if (!otherUser) {
+      throw new ApiError("User not found!", 404);
+    }
 
-  const otherUser = await db.user.findUnique({
-    where: { id },
-  });
+    if (otherUser.id === userId) {
+      throw new ApiError("Cannot follow yourself!", 400);
+    }
 
-  if (!otherUser) {
-    throw new ApiError("User not found!", 404);
-  }
-
-  if (otherUser.id === userId) {
-    throw new ApiError("Cannot follow yourself!", 400);
-  }
-
-  const existingFollow = await db.follow.findUnique({
-    where: {
-      followingId_followedById: {
-        followingId: otherUser.id,
-        followedById: userId,
-      },
-    },
-  });
-
-  if (existingFollow) {
-    throw new ApiError("Already following this user!", 400);
-  }
-
-  const follow = await db.follow.create({
-    data: {
+    const existingFollow = await Follow.findOne({
       followingId: otherUser.id,
       followedById: userId,
-    },
-    include: {
-      following: true,
-      followedBy: true,
-    },
-  });
+    });
 
-  return follow;
+    if (existingFollow) {
+      throw new ApiError("Already following this user!", 400);
+    }
+
+    const follow = new Follow({
+      followingId: otherUser.id,
+      followedById: userId,
+    });
+
+    await follow.save();
+    const following = await User.findById(otherUser.id);
+    const followedBy = await User.findById(userId);
+    return { ...follow, following, followedBy };
+  } catch (error) {
+    throw error;
+  }
 };
 
 export const unfollowUser = async (id: string, userId: string) => {
-  const otherUser = await db.user.findUnique({
-    where: { id },
-  });
+  try {
+    const otherUser = await User.findById(id);
+    if (!otherUser) {
+      throw new ApiError("User not found!", 404);
+    }
 
-  if (!otherUser) {
-    throw new ApiError("User not found!", 404);
+    if (otherUser.id === userId) {
+      throw new ApiError("Cannot unfollow yourself!", 400);
+    }
+
+    const existingFollow = await Follow.findOneAndDelete({
+      followingId: otherUser.id,
+      followedById: userId,
+    });
+
+    if (!existingFollow) {
+      throw new ApiError("Already unfollowed this user!", 400);
+    }
+    const following = await User.findById(otherUser.id);
+    return { ...existingFollow, following };
+  } catch (error) {
+    throw error;
   }
-
-  if (otherUser.id === userId) {
-    throw new ApiError("Cannot unfollow yourself!", 400);
-  }
-
-  const existingFollow = await db.follow.findUnique({
-    where: {
-      followingId_followedById: {
-        followingId: otherUser.id,
-        followedById: userId,
-      },
-    },
-  });
-
-  if (!existingFollow) {
-    throw new ApiError("Already unfollowed this user!", 400);
-  }
-
-  const follow = await db.follow.delete({
-    where: {
-      id: existingFollow.id,
-    },
-    include: {
-      following: true,
-    },
-  });
-
-  return follow;
 };
 
 export const getFollowedUsers = async (userId: string) => {
   try {
-    const users = db.follow.findMany({
-      where: {
-        followedById: userId,
-        following: {
-          OR: [
+    const users = await Follow.find({ followedById: userId })
+      .populate({
+        path: 'following',
+        match: {
+          $or: [
             {
-              blocking: {
-                none: {
-                  blockingId: userId,
-                },
-              },
+              'blocking.blockingId': { $ne: userId }
             },
             {
-              blockedBy: {
-                none: {
-                  blockedById: userId,
-                },
-              },
-            },
-          ],
+              'blockedBy.blockedById': { $ne: userId }
+            }
+          ]
         },
-      },
-      include: {
-        following: {
-          include: {
-            stream: {
-              select: {
-                isLive: true,
-              },
-            },
-          },
-        },
-      },
-    });
-
+      });
     return users;
   } catch (error) {
     return [];

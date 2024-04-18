@@ -17,6 +17,7 @@ export function errorHandler(err: Error, req: Request, res: Response<ErrorRespon
     stack: process.env.NODE_ENV === 'production' ? '🥞' : err.stack,
   });
 }
+
 export function logResponseData(req: Request, res: any, next: NextFunction) {
   // Store reference to original end method
   const originalEnd = res.end;
