@@ -17,3 +17,28 @@ export function errorHandler(err: Error, req: Request, res: Response<ErrorRespon
     stack: process.env.NODE_ENV === 'production' ? '🥞' : err.stack,
   });
 }
+export function logResponseData(req: Request, res: any, next: NextFunction) {
+  // Store reference to original end method
+  const originalEnd = res.end;
+
+  // Create a variable to store response data
+  let responseData = '';
+
+  // Override the end method
+  res.end = function(data: any) {
+    // Concatenate response data
+    responseData += data || '';
+
+    // Log response data
+    try {
+      console.log(JSON.parse(responseData));
+    } catch (error) {
+      console.log(`Response Data: ${responseData}`);
+    }
+    // Call the original end method
+    originalEnd.apply(res, arguments);
+  };
+
+  // Move to the next middleware
+  next();
+}

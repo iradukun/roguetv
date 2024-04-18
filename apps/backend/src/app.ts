@@ -7,10 +7,14 @@ import api from "./api";
 import { livekitWebhook } from "./controllers/livekit.controller";
 import { subscriptionWebhook } from "./controllers/subscription.controller";
 import * as middlewares from "./middlewares";
+import { logResponseData } from "./middlewares";
 
 require("dotenv").config();
 
 const app = express();
+if (process.env.NODE_ENV === "development") {
+  app.use(logResponseData);
+}
 
 app.use(morgan("dev"));
 app.use(helmet());
