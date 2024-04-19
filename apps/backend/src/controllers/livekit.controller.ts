@@ -80,7 +80,7 @@ export async function livekitWebhook(req: Request, res: Response) {
           });
 
           console.log('[DEBUG]: 5');
-          console.log('[EGRESS] created', egress.fileResults);
+          console.log('[EGRESS] created');
           await Stream.findOneAndUpdate(
             { ingressId: event.ingressInfo?.ingressId },
             { isLive: true },
@@ -96,11 +96,13 @@ export async function livekitWebhook(req: Request, res: Response) {
         { isLive: false },
         { new: true },
       );
+      console.log("[DEBUG]: 1");
       const broadcast = await Broadcast.findOne({
         isComplete: false,
         streamId: stream?._id.toString(),
       });
       if (broadcast) {
+        console.log("[DEBUG]: 2");
         await Broadcast.findByIdAndUpdate(broadcast._id.toString(), { isComplete: true });
       }
     }
