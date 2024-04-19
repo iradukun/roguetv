@@ -101,7 +101,7 @@ export async function livekitWebhook(req: Request, res: Response) {
         streamId: stream?._id.toString(),
       });
       if (broadcast) {
-        await Broadcast.findByIdAndUpdate(broadcast._id, { isComplete: true });
+        await Broadcast.findByIdAndUpdate(broadcast._id.toString(), { isComplete: true });
       }
     }
 
