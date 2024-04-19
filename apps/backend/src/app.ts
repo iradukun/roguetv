@@ -12,10 +12,6 @@ import { logResponseData } from './middlewares';
 require('dotenv').config();
 
 const app = express();
-if (process.env.NODE_ENV === 'development') {
-  app.use(logResponseData);
-}
-
 // Custom middleware function to log response data
 
 // Register middleware
